@@ -1,0 +1,24 @@
+{
+    "name": "mehmetb/blm",
+    "description": "PHP BLM reader and creator package",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Mehmetb\\Blm\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mehmet Bulut"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-curl": "*"
+    },
+
+    "require-dev": {
+        "ext-json": "*"
+    }
+}
