@@ -1,24 +1,41 @@
 {
-    "name": "mehmetb/blm",
-    "description": "PHP BLM reader and creator package",
-    "type": "library",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Mehmetb\\Blm\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Mehmet Bulut"
-        }
-    ],
-    "require": {
-        "php": ">=7.4",
-        "ext-curl": "*"
-    },
-
-    "require-dev": {
-        "ext-json": "*"
+  "name": "mehmetb/blm",
+  "description": "PHP BLM reader and creator package",
+  "keywords": [
+    "BLM",
+    "blm file",
+    "php"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/mehmetbltt23/Blm",
+  "authors": [
+    {
+      "name": "Mehmet Bulut",
+      "email": "mehmetbltt@gmail.com",
+      "role": "Senior Full Stack Developer"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Mehmetb\\BLM\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^7.4 || ^8.0 || ^8.1"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Mehmetb\\BLM\\Tests\\": "tests"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.3.9"
+  },
+  "prefer-stable": true,
+  "prefer-lowest": false,
+  "platform": {
+    "php": "^7.4 || ^8.0 || ^8.1"
+  },
+  "platform-dev": []
 }
