@@ -9,7 +9,6 @@ Before
 - docker image build -t blm .
 - docker container run -d --name blm-package blm
 ```
-
-#### **Docker Compose**
+### **Docker Compose**
 - docker-compose up -d --build
 
