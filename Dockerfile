@@ -20,6 +20,5 @@ WORKDIR /var/www
 
 #COPY / .
 #RUN composer install
-#RUN composer dump-autoload
 
 CMD ["php-fpm"]
