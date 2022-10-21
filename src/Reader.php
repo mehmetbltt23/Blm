@@ -11,9 +11,9 @@ class Reader
     protected array $definitions;
     protected array $data;
 
-    public function __construct(string $file)
+    public function __construct(string $file_path)
     {
-        $this->setFile($file);
+        $this->setFile($file_path);
         $this->setPathInfo();
         $this->setContent();
         $this->setHeader();
