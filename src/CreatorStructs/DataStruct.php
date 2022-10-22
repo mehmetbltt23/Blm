@@ -12,7 +12,6 @@ class DataStruct
     const TOWN = 'TOWN';
     const POSTCODE1 = 'POSTCODE1';
     const POSTCODE2 = 'POSTCODE2';
-    const FEATURE = 'FEATURE';
     const SUMMARY = 'SUMMARY';
     const DESCRIPTION = 'DESCRIPTION';
     const BRANCH_ID = 'BRANCH_ID';
@@ -35,6 +34,15 @@ class DataStruct
     const TRANS_TYPE_ID = 'TRANS_TYPE_ID';
     const NEW_HOME_FLAG = 'NEW_HOME_FLAG';
     const ADMINISTRATION_FEE = 'ADMINISTRATION_FEE';
+    const FEATURE = 'FEATURE%s';
+    const MEDIA_IMAGE = 'MEDIA_IMAGE_%s';
+    const MEDIA_IMAGE_TEXT = 'MEDIA_IMAGE_TEXT_%s';
+    const MEDIA_FLOOR_PLAN = 'MEDIA_FLOOR_PLAN_%s';
+    const MEDIA_FLOOR_PLAN_TEXT = 'MEDIA_FLOOR_PLAN_TEXT_%s';
+    const MEDIA_DOCUMENT = 'MEDIA_DOCUMENT_%s';
+    const MEDIA_DOCUMENT_TEXT = 'MEDIA_DOCUMENT_TEXT_%s';
+    const MEDIA_VIRTUAL_TOUR = 'MEDIA_VIRTUAL_TOUR_%s';
+    const MEDIA_VIRTUAL_TOUR_TEXT = 'MEDIA_VIRTUAL_TOUR_TEXT_%s';
 
     private array $data;
 
@@ -85,65 +93,75 @@ class DataStruct
         return 'virtual_tours';
     }
 
-    public function setDetail(string $key, string $value): void
+    public function setDetail(string $key, string $value): string
     {
         $this->setData($this->getDetailKey(), $key, $value);
+        return $key;
     }
 
-    public function setFeature(string $value): void
+    public function setFeature(string $value): string
     {
         $key = $this->getFeatureKey();
-        $count = count($this->data[$key]);
-        $count = $count <= 0 ? 1 : $count;
-        $this->setData($key, "FEATURE$count", $value);
+        $count = count($this->data[$key]) + 1;
+        $this->setData($key, sprintf(self::FEATURE, $count), $value);
+
+        return "FEATURE$count";
     }
 
-    public function setImage(string $path, string $title): void
+    public function setImage(string $path, string $title): array
     {
-        $this->setMedia($this->getImageKey(), $path, $title);
+        return $this->setMedia($this->getImageKey(), $path, $title);
     }
 
-    public function setFloorPlan(string $path, string $title): void
+    public function setFloorPlan(string $path, string $title): array
     {
-        $this->setMedia($this->getFloorPlanKey(), $path, $title);
+        return $this->setMedia($this->getFloorPlanKey(), $path, $title);
     }
 
-    public function setDocument(string $path, string $title): void
+    public function setDocument(string $path, string $title): array
     {
-        $this->setMedia($title - $this->getDocumentKey(), $path, $title);
+        return $this->setMedia($this->getDocumentKey(), $path, $title);
     }
 
-    public function setVirtualTour(string $path, string $title): void
+    public function setVirtualTour(string $path, string $title): array
     {
-        $this->setMedia($this->getVirtualTourKey(), $path, $title);
+        return $this->setMedia($this->getVirtualTourKey(), $path, $title);
     }
 
-    private function setMedia(string $key, string $path, string $title): void
+    private function setMedia(string $key, string $path, string $title): array
     {
-        $count_str = isset($this->data[$key]) ? count($this->data[$key]) : 0;
+        $count_str = count($this->data[$key]);
+        if ($count_str > 0) {
+            $count_str /=2;
+        }
+
         if ($count_str <= 9) {
             $count_str = "0$count_str";
         }
 
+        $fn = function (string $text) use ($count_str) {
+            return sprintf($text, $count_str);
+        };
+
         switch ($key) {
             case $this->getImageKey():
-                $path_key = "MEDIA_IMAGE_$count_str";
-                $title_key = "MEDIA_IMAGE_TEXT_$count_str";
+                $path_key = $fn(self::MEDIA_IMAGE);
+                $title_key = $fn(self::MEDIA_IMAGE_TEXT);
                 break;
 
             case $this->getFloorPlanKey():
-                $path_key = "MEDIA_FLOOR_PLAN_$count_str";
-                $title_key = "MEDIA_FLOOR_PLAN_TEXT_$count_str";
+                $path_key = $fn(self::MEDIA_FLOOR_PLAN);
+                $title_key = $fn(self::MEDIA_FLOOR_PLAN_TEXT);
                 break;
 
             case $this->getDocumentKey():
-                $path_key = "MEDIA_DOCUMENT_$count_str";
-                $title_key = "MEDIA_DOCUMENT_TEXT_$count_str";
+                $path_key = $fn(self::MEDIA_DOCUMENT);
+                $title_key = $fn(self::MEDIA_DOCUMENT_TEXT);
                 break;
 
             case $this->getVirtualTourKey():
-                $path_key = "MEDIA_VIRTUAL_TOUR_$count_str";
-                $title_key = "MEDIA_VIRTUAL_TOUR_TEXT_$count_str";
+                $path_key = $fn(self::MEDIA_VIRTUAL_TOUR);
+                $title_key = $fn(self::MEDIA_VIRTUAL_TOUR_TEXT);
                 break;
 
             default:
@@ -152,6 +170,8 @@ class DataStruct
 
         $this->setData($key, $path_key, $path);
         $this->setData($key, $title_key, $title);
+
+        return ['path_key' => $path_key, 'title_key' => $title_key];
     }
 
     public function getData(): array
@@ -172,6 +192,10 @@ class DataStruct
 
     public function getRaw(array $all_keys): string
     {
+        if (empty($all_keys)) {
+            throw new CreatorException('Empty keys');
+        }
+
         $raw_data = "";
         $data = $this->getData();
         foreach ($all_keys as $key) {
@@ -181,10 +205,6 @@ class DataStruct
 
         $raw_data .= "~\n";
 
-        $raw = "#DATA#\n";
-        $raw .= $raw_data;
-        $raw .= "#END#\n";
-
-        return $raw;
+        return $raw_data;
     }
 }

@@ -13,23 +13,25 @@ class Creator
     private HeaderStruct $header;
     private DefinitionStruct $definition;
 
-    public function save(string $name = ''): string
+    public function save(string $path, string $name = ''): string
     {
         $default_name = 'ISSL' . date('YmdHis');
         $ext = 'BLM';
 
         if ($name == '') {
             $name = $default_name . '.' . $ext;
-        } else if (strpos(strtolower($name), '.blm') === false) {
-            $name .= '.' . $ext;
+        } else {
+            $name = pathinfo($name)['filename'].'.'.$ext;
         }
 
+        $path = pathinfo($path)['basename'].'/'.$name;
+
         $content = $this->createBlmContents();
-        if (!file_put_contents($name, $content)) {
+        if (!file_put_contents($path, $content)) {
             throw new CreatorException('Unable to create output file: ' . $name);
         }
 
-        return $name;
+        return $path;
     }
 
     public function getContent(): string
@@ -79,7 +81,7 @@ class Creator
         $this->header = $header;
     }
 
-    private function setDefinitionKeys(): self
+    private function setDefinitionKeys(): DefinitionStruct
     {
         $definition = $this->getDefinition();
         foreach ($this->getData() as $item) {
@@ -90,26 +92,28 @@ class Creator
             }
         }
 
-        return $this;
+        return $definition;
     }
 
     private function createBlmContents(): string
     {
-        $content = "";
         $data = $this->getData();
         $count = count($data);
-        foreach ($this->getData() as $data_struct) {
+        $header = $this->getHeader();
+        $header->setPropertyCount($count);
+        $definition_keys = $this->setDefinitionKeys();
+
+        $content = "";
+        foreach ($data as $data_struct) {
             if ($data_struct instanceof DataStruct) {
                 $content .= $data_struct->getRaw($this->getDefinition()->getKeys());
             }
         }
 
-        $header = $this->getHeader();
-        $header->setPropertyCount($count);
-
         $raw = "";
         $raw .= $header->getRaw();
-        $raw .= $this->setDefinitionKeys()->getDefinition()->getRaw();
+        $raw .= $definition_keys->getRaw();
+        $raw .= "#DATA#\n$content#END#\n";
 
         return $raw;
     }
