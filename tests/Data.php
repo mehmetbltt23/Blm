@@ -83,7 +83,7 @@ class Data
                 ],
                 [
                     'path' => '/path/' . uniqid() . 'file.jpeg',
-                    'text' => 'test path ' . uniqid()
+                    'text' => ''
                 ],
             ],
             'floor_plans' => [
