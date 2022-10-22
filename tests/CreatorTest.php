@@ -185,7 +185,7 @@ class CreatorTest extends TestCase
 
         $creator->getContent();
         $this->addToAssertionCount(1);
-        $file = $creator->save('build');
+        $file = $creator->save('data');
         $this->fileExists($file);
         unlink($file);
     }
