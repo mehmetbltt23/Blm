@@ -2,6 +2,8 @@
 
 namespace Mehmetb\BLM;
 
+use Mehmetb\BLM\Exceptions\ReaderException;
+
 class Reader
 {
     private string $file;
@@ -44,7 +46,7 @@ class Reader
     private function setFile(string $file): void
     {
         if (!file_exists($file)) {
-            throw new \Exception('File not found', HttpResponse::HTTP_NOT_FOUND);
+            throw new ReaderException('File not found');
         }
 
         $this->file = $file;
@@ -56,7 +58,7 @@ class Reader
     {
         $content = file_get_contents($this->file);
         if (empty($content)) {
-            throw new \Exception('BLM file empty');
+            throw new ReaderException('BLM file empty');
         }
 
         $this->content = mb_convert_encoding($content, 'UTF-8', mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
@@ -67,14 +69,14 @@ class Reader
         $this->pathInfo = pathinfo($this->file);
 
         if (strtolower($this->getPathInfo()['extension']) != 'blm') {
-            throw new \Exception("Given file is not a .BLM");
+            throw new ReaderException("Given file is not a .BLM");
         }
     }
 
     private function setHeader(): void
     {
         if (!preg_match('/#HEADER#(.*?)#/sm', $this->content, $match)) {
-            throw new \Exception("No #HEADER# provided");
+            throw new ReaderException("No #HEADER# provided");
         }
         $params = [];
         $lines = explode("\n", $match[1]);
@@ -92,11 +94,11 @@ class Reader
     private function setDefinitions(): void
     {
         if (empty($this->headers)) {
-            throw new \Exception("Please set headers first.", HttpResponse::HTTP_BAD_REQUEST);
+            throw new ReaderException("Please set headers first.");
         }
 
         if (!preg_match('/#DEFINITION#(.*?)\#/sm', $this->content, $match)) {
-            throw new \Exception("No #DEFINITION# provided", HttpResponse::HTTP_BAD_REQUEST);
+            throw new ReaderException("No #DEFINITION# provided");
         }
 
         $fields = array_map('trim', explode($this->headers['EOF'], $match[1]));
@@ -113,11 +115,11 @@ class Reader
     private function setData(): void
     {
         if (empty($this->definitions)) {
-            throw new \Exception("Please set definitions first.");
+            throw new ReaderException("Please set definitions first.");
         }
 
         if (!preg_match('/#DATA#(.*)#END#/sm', $this->content, $match)) {
-            throw new \Exception("No #DATA# provided (or no #END# defined)");
+            throw new ReaderException("No #DATA# provided (or no #END# defined)");
         }
 
         $data = array();

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mehmetb\BLM\structs;
+namespace Mehmetb\BLM\CreatorStructs;
 
-use Mehmetb\BLM\HttpResponse;
+use Mehmetb\BLM\Exceptions\CreatorException;
 
 class DataStruct
 {
@@ -147,28 +147,42 @@ class DataStruct
                 break;
 
             default:
-                throw new \Exception('Invalid key', HttpResponse::HTTP_BAD_REQUEST);
+                throw new CreatorException('Invalid key');
         }
 
         $this->setData($key, $path_key, $path);
         $this->setData($key, $title_key, $title);
     }
 
-    public function getRaw(): string
+    public function getData(): array
     {
-        $content = '';
+        $data = [];
         foreach ($this->data as $items) {
-            foreach ($items as $item) {
-                $content .= $item . '|';
+            foreach ($items as $key => $value) {
+                if (!is_string($value)) {
+                    throw new CreatorException('Invalid item');
+                }
+
+                $data[$key] = $value;
             }
         }
 
-        if (!empty($content)) {
-            $content .= "~\n";
+        return $data;
+    }
+
+    public function getRaw(array $all_keys): string
+    {
+        $raw_data = "";
+        $data = $this->getData();
+        foreach ($all_keys as $key) {
+            $value = $data[$key] ?? '';
+            $raw_data .= $value . '|';
         }
 
+        $raw_data .= "~\n";
+
         $raw = "#DATA#\n";
-        $raw .= $content;
+        $raw .= $raw_data;
         $raw .= "#END#\n";
 
         return $raw;

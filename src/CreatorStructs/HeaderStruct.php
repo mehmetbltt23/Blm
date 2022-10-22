@@ -1,6 +1,6 @@
 <?php
 
-namespace Mehmetb\BLM\structs;
+namespace Mehmetb\BLM\CreatorStructs;
 
 class HeaderStruct
 {
@@ -110,16 +110,6 @@ class HeaderStruct
     }
 
     /**
-     * @param $key
-     * @param $value
-     * @return void
-     */
-    public function pushCustomHeaderData($key, $value): void
-    {
-        $this->customData[$key] = $value;
-    }
-
-    /**
      * @return string
      */
     public function getRaw(): string
@@ -128,6 +118,7 @@ class HeaderStruct
         $raw .= 'Version : ' . $this->getVersion() . "\n";
         $raw .= 'EOF : ' . $this->getEof() . "\n";
         $raw .= 'EOR : ' . $this->getEor() . "\n";
+        $raw .= 'Property Count : ' . $this->getPropertyCount() . "\n";
         $raw .= 'Generated Date : ' . $this->getGenerateDate() . "\n";
         foreach ($this->getCustomData() as $key => $value) {
             $raw .= $key . ' : ' . $value . "\n";
