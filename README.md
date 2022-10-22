@@ -1,4 +1,4 @@
-# Blm File Reader &amp; Blm File Creator Package
+# Rightmove BLM File Reader &amp; Creator
 
 ### Docker Build and Create Container
 
@@ -16,7 +16,7 @@ Before
 
 ### Usage
 
-#### Reader BLM
+#### Reader
 ```
 $reader = new Reader('data/test.BLM');
 #results
@@ -25,7 +25,7 @@ $reader->getHeaders();
 $reader->getDefinitions();
 ```
 
-#### Creator BLM
+#### Creator
 
 ```
 $creator = new Creator();
