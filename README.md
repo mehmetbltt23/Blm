@@ -1,18 +1,9 @@
 # Rightmove BLM File Reader &amp; Creator
 
-### Docker Build and Create Container
-
+### Install
 ```
-Before
-   Remove Comments:  'Dockerfile:21' and 'Dockerfile:22'
-
-- docker image build -t blm .
-- docker container run -d --name blm-package blm
+composer require mehmetb/blm
 ```
-
-### **Docker Compose**
-
-- docker-compose up -d --build
 
 ### Usage
 
@@ -135,3 +126,17 @@ $creator->save('example/files','test.BLM'); // Creates a BLM file in the directo
     
     $creator->save('example/files');
 ```
+
+### Docker Build and Create Container
+
+```
+Before
+   Remove Comments:  'Dockerfile:21' and 'Dockerfile:22'
+
+- docker image build -t blm .
+- docker container run -d --name blm-package blm
+```
+
+### **Docker Compose**
+
+- docker-compose up -d --build
